@@ -1,7 +1,7 @@
 import express, { json, urlencoded } from "express";
 import productsRoutes from "./routes/products/index";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 

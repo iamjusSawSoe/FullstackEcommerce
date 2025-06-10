@@ -1,4 +1,6 @@
+import { createInsertSchema } from "drizzle-zod";
 import { Router } from "express";
+import { productsTable } from "../../db/productsSchema";
 import {
   createProduct,
   deleteProduct,
@@ -8,6 +10,8 @@ import {
 } from "./productsController";
 
 const router = Router();
+
+const createProductSchema = createInsertSchema(productsTable).omit({});
 
 // Products enpoints
 router.get("/", listProducts);
