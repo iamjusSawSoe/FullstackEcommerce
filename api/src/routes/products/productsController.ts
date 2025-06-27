@@ -1,5 +1,7 @@
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
+import _ from "lodash";
+import { createProductSchema } from ".";
 import { db } from "../../db/index";
 import { productsTable } from "../../db/productsSchema";
 
@@ -32,10 +34,10 @@ export async function getProductById(req: Request, res: Response) {
 
 export async function createProduct(req: Request, res: Response) {
   try {
-    const [product] = await db
-      .insert(productsTable)
-      .values(req.body)
-      .returning();
+    console.log(Object.keys(createProductSchema.shape));
+
+    const data = _.pick(req.body, Object.keys(createProductSchema.shape));
+    const [product] = await db.insert(productsTable).values(data).returning();
 
     res.status(201).json({ message: "Product added", product: product });
   } catch (error) {
@@ -71,9 +73,13 @@ export async function deleteProduct(req: Request, res: Response) {
       .where(eq(productsTable.id, productId))
       .returning();
 
+    console.log("Deleted Product:", deletedProduct);
+
     if (!deletedProduct) res.status(404).send({ message: "Product not found" });
 
-    res.status(204);
+    res.status(204).json({
+      message: "Product deleted",
+    });
   } catch (error) {
     res.status(500).send(error);
   }

@@ -1,6 +1,7 @@
 import { createInsertSchema } from "drizzle-zod";
 import { Router } from "express";
 import { productsTable } from "../../db/productsSchema";
+import { validateData } from "../../middlewares/validationMiddleware";
 import {
   createProduct,
   deleteProduct,
@@ -11,14 +12,19 @@ import {
 
 const router = Router();
 
-const createProductSchema = createInsertSchema(productsTable).omit({});
+export const createProductSchema = createInsertSchema(productsTable).pick({
+  name: true,
+  description: true,
+  image: true,
+  price: true,
+});
 
 // Products enpoints
 router.get("/", listProducts);
 
 router.get("/:id", getProductById);
 
-router.post("/", createProduct);
+router.post("/", validateData(createProductSchema), createProduct);
 
 router.put("/:id", updateProduct);
 
